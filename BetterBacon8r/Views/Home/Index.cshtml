@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model IEnumerable<string>
+
+<div class="text-center">
+    <h3 class="display-4">Welcome</h3>
+</div>
+
+<div class="container-fluid">
+    <h2>Your mission, should you choose to accept it...</h2>
+
+    <p>Pick a starter word, or enter your own:</p>
+    <div>
+        @foreach (var word in Model) {
+            <button class="btn-primary button-spaced">@word</button>
+        }
+    </div>
+    <br />
+    <label for="word">Enter a word</label>
+    <input type="text" id="word" />
+    <button class="btn-primary">Let's go</button>
+</div>
+<style>
+  .button-spaced {
+    margin: 2px;
+  }
+
+  
+</style>
