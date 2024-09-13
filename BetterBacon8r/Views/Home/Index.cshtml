@@ -12,12 +12,21 @@
         color: white;
     }
 
-    .special:hover {
+        .special:hover {
             background-color: darkorange;
-    }
+        }
 
     #baconated {
         display: none;
+    }
+
+    #iterationCount {
+      border: 1px solid lightgray;
+      color: blue;
+      padding: 5px 15px 5px 15px;
+      position: fixed;
+      top: 1%;
+      right: 5%;
     }
 
     /* Modal container styling */
@@ -62,9 +71,9 @@
 
 <div class="container-fluid">
     <div id="resultsContainer">
-      <div id="navigationContainer">
-        <h2>Your mission, should you choose to accept it...</h2>
-        <p>Find the Wiki page for <b>Kevin Bacon</b> as fast as you can.</p>
+        <div id="navigationContainer">
+            <h2>Your mission, should you choose to accept it...</h2>
+            <p>Find the Wiki page for <b>Kevin Bacon</b> as fast as you can.</p>
             <p>Pick a starter word, or enter your own:</p>
         </div>
         <div id="seedWordsContainer">
@@ -76,10 +85,12 @@
         @Html.ActionLink("Start over", "Index", "Home")
         <br />
         <br />
-        <label for="word">Enter a word</label>
-        <input type="text" id="word" />
-        <button id="go" class="btn-primary">Let's go</button>
-        <span id="iterationCount" data-count="1"></span>
+        <div id="enterAWord">
+            <label for="word">Enter a word</label>
+            <input type="text" id="word" />
+            <button id="go" class="btn-primary">Let's go</button>
+        </div>
+        <span id="iterationCount" data-count="1">1</span>
         <div id="flashingNumber" class="modal"></div>
     </div>
 </div>
@@ -166,6 +177,7 @@
             let nextValue = currentValue + 1;
             $('#iterationCount').data('count', nextValue)
             $('#iterationCount').attr('data-count', nextValue);
+            $('#iterationCount').text(nextValue);
             showFlashingNumber(nextValue);
         }
 
@@ -175,7 +187,7 @@
             modal.css('display', 'block');
 
             modal.animate({ opacity: 1 }, 150) // Flash in
-                .delay(150) 
+                .delay(150)
                 .animate({ opacity: 0 }, 150, function () { // Fade out
                     modal.css('display', 'none');
                 });
