@@ -35,9 +35,9 @@
         position: fixed;
         left: 50%;
         top: 50%;
+        margin-top: 15%;
         transform: translate(-50%, -50%);
         z-index: 1000;
-        background-color: rgba(0, 0, 0, 0.1);
         color: lightcoral;
         padding: 20px;
         border-radius: 10px;
@@ -130,6 +130,7 @@
 
         function GetNextWords(word) {
             $('#navigationContainer').hide();
+            $('#enterAWord').hide();
 
             if (checkKevinBacon(word)) {
                 let iterationCount = $('#iterationCount').attr('data-count');
