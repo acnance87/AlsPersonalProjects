@@ -43,12 +43,25 @@ namespace BetterBacon8r.Controllers {
         }
 
         private static IEnumerable<string> GetTruncatedAndRandomizedWords(List<string> seedWords) {
-            return seedWords
+            var toReturn = new List<string>();
+            var kb = seedWords.FirstOrDefault(e => e.Equals("Kevin Bacon", StringComparison.OrdinalIgnoreCase));
+
+            toReturn = seedWords
                 .Distinct()
                 .OrderBy(x => Guid.NewGuid())
-                .Take(250)
+                .Take(35)
                 .OrderBy(x => x)
                 .ToList();
+
+            if (string.IsNullOrEmpty(kb) is false) {
+                toReturn.Add(kb);
+                toReturn = toReturn
+                    .Distinct()
+                    .ToList();
+            }
+
+            return toReturn;
+                
         }
 
         [HttpGet]

@@ -62,15 +62,18 @@
 
 <div class="container-fluid">
     <div id="resultsContainer">
+      <div id="navigationContainer">
         <h2>Your mission, should you choose to accept it...</h2>
         <p>Find the Wiki page for <b>Kevin Bacon</b> as fast as you can.</p>
-        <p>Pick a starter word, or enter your own:</p>
+            <p>Pick a starter word, or enter your own:</p>
+        </div>
         <div id="seedWordsContainer">
             @foreach (var word in Model) {
                 <button onclick="getNextWordFromButton(event);" class="btn-primary button-spaced">@word</button>
             }
         </div>
         <a id="newWords" href="#">Get new words</a>
+        @Html.ActionLink("Start over", "Index", "Home")
         <br />
         <br />
         <label for="word">Enter a word</label>
@@ -115,6 +118,8 @@
         }
 
         function GetNextWords(word) {
+            $('#navigationContainer').hide();
+
             if (checkKevinBacon(word)) {
                 let iterationCount = $('#iterationCount').attr('data-count');
                 $('#resultsContainer').hide();
