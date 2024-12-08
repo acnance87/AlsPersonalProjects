@@ -1,0 +1,109 @@
+﻿@using AlsProjects.ViewModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="shortcut icon" href="/favicon-david.ico" type="image/x-icon" />
+
+<div class="jumbotron">
+    <h3>Let's take some souls!</h3>
+</div>
+<div id="workouts"></div>
+<button id="addWorkout" class="btn-primary">Click to add a workout</button>
+
+<!-- Modal -->
+<div class="modal fade" id="addWorkoutModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choose a workout...</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="workoutsHolder">
+                    @* Workouts selection *@
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
+                <button id="saveChangesWorkoutSelect" type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let isDefaultState = true;
+        var selectedWorkoutIds = [];
+        var previsoulySelectedWorkoutIds = [];
+        function toggleEditable(e, isEdit) {
+            if (!isEdit) {
+                if (e.target.id.toLowerCase().indexOf('exertion') > -1) {
+                    e.target.innerHTML = `<select id='${e.target.id}' onblur='toggleEditable(event, true)'><option value='1'>Low</option><option value='2'>Med</option><option value='3'>High</option><option value='4'>Failure</option></select>`;
+                }
+                else {
+                    e.target.innerHTML = `<input type='number' data-edit=${e.target.id} class='form-control' onblur='toggleEditable(event, true)'/>`;
+                }
+                e.target.onclick = null;
+            }
+            else {
+                let newValue = '';
+                if (e.target.id.toLowerCase().indexOf('exertion') > -1) {
+                    newValue = e.target.options[e.target.selectedIndex].getHTML();
+                    $('#' + e.target.id).html(`<td id='${e.target.id}' onclick="toggleEditable(event)">${newValue}</td>`); $('#' + e.target.id).html(`<td id='${e.target.id}' onclick="toggleEditable(event)">${newValue}</td>`);
+                }
+                else {
+                    newValue = e.target.value;
+                    $(`#${e.target.getAttribute("data-edit")}`).html(`<td id='${e.target.id}' onclick="toggleEditable(event)">${newValue}</td>`);
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            $('#addWorkout').on('click', function () {
+                $.ajax({
+                    url: '/workout/getworkouts',
+                    type: 'get',
+                    success: function (data) {
+                        $('#workoutsHolder').html(data);
+                        $('#addWorkoutModal').modal('toggle');
+                    }
+                })
+            });
+
+            $('#saveChangesWorkoutSelect').on('click', function (e) {
+                $('#addWorkoutModal').modal('toggle');
+                $('.workoutSelect:checked').each(function () {
+                    let data = $(this).attr('id').split('-');
+                    if (!selectedWorkoutIds.some(workout => workout.workoutId === data[0])) {
+                        selectedWorkoutIds.push({ workoutId: data[0], exerciseName: data[1] });
+                    }
+                });
+
+                if (previsoulySelectedWorkoutIds != selectedWorkoutIds)
+                    $.ajax({
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        url: "/workout/createworkout",
+                        type: 'post',
+                        data: JSON.stringify(selectedWorkoutIds),
+                        success: function (response) {
+                            $('#workouts').html(response);
+                            selectedWorkoutIds.forEach(function (swi) {
+                                if (previsoulySelectedWorkoutIds.some(workout => workout.workoutId === swi[0])) {
+                                    previsoulySelectedWorkoutIds.push({ workoutId: swi[0], exerciseName: swi[1] });
+                                }
+                            });
+                        }
+                    });
+            });
+        });
+
+        $('.btn-close, .close').click(function () {
+            $('#addWorkoutModal').modal("hide");
+        });
+    </script>
+}

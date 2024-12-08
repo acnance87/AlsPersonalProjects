@@ -1,0 +1,26 @@
+﻿@model AlsProjects.Models.Workouts.WorkoutSessions
+
+<div id="ActiveWorkoutSession">
+    <p>Start date: @Model.SessionDate.ToShortDateString()</p>
+    <table class="table table-bordered table-condensed table-responsive table-striped">
+        <thead>
+            <tr>
+                <td>Exercise</td>
+                <td>Exertion</td>
+                <td>Reps</td>
+                <td>Weight</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var workout in Model.Workouts) {
+                <tr>
+                    <td>@workout.WorkoutType.ExerciseName</td>
+                    <td id="@($"{workout.WorkoutTypeID}-{nameof(workout.PerceivedExertionKind)}")" onclick="toggleEditable(event)">@workout.PerceivedExertionKind</td>
+                    <td id="@($"{workout.WorkoutTypeID}-{nameof(workout.Repetitions)}")" onclick="toggleEditable(event)">@workout.Repetitions</td>
+                    <td id="@($"{workout.WorkoutTypeID}-{nameof(workout.Weight)}")" onclick="toggleEditable(event)"> @workout.Weight</td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>

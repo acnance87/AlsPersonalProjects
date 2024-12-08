@@ -1,0 +1,12 @@
+﻿@using AlsProjects.Models.Workouts
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<WorkoutTypes>
+
+@foreach (var exercise in Model) {
+    <input type="checkbox" name="workoutsSelected" class="workoutSelect" id="@($"{exercise.WorkoutTypeID}-{exercise.ExerciseName}")" />
+    <label for="@($"{exercise.WorkoutTypeID}-{exercise.ExerciseName}")">@exercise.ExerciseName</label>
+    <br />
+}
