@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,6 +9,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>False</Optimize>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Repository\Ballculator\**" />
+    <Content Remove="Repository\Ballculator\**" />
+    <EmbeddedResource Remove="Repository\Ballculator\**" />
+    <None Remove="Repository\Ballculator\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="wwwroot\seedWords.json" />
@@ -27,10 +34,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repository\Ballculator\" />
   </ItemGroup>
 
 </Project>
