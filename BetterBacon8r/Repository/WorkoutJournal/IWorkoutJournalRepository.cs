@@ -1,6 +1,6 @@
 ﻿using AlsProjects.Models.Workouts;
 
-namespace AlsProjects.Repository;
+namespace AlsProjects.Repository.WorkoutJournal;
 
 public interface IWorkoutJournalRepository
 {

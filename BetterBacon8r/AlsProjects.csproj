@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Repository\efpt.config.json.user" />
+    <None Include="Repository\WorkoutJournal\efpt.config.json.user" />
   </ItemGroup>
 
   <ItemGroup>

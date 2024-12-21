@@ -1,6 +1,6 @@
 ﻿using AlsProjects.Models.Workouts;
-using AlsProjects.Repository;
 using AlsProjects.Manager.Contract;
+using AlsProjects.Repository.WorkoutJournal;
 
 namespace AlsProjects.Manager
 {

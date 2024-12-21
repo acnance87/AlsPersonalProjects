@@ -1,9 +1,8 @@
 using AlsProjects.Models.Workouts;
-using WorkoutJournal.Data.Repository;
 using AlsProjects.Manager.Contract;
 using AlsProjects.Manager;
-using AlsProjects.Repository;
 using Microsoft.EntityFrameworkCore;
+using AlsProjects.Repository.WorkoutJournal;
 
 internal class Program {
     private const string _wikiClient = "WikiClient";
