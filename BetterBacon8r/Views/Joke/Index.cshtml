@@ -1,0 +1,71 @@
+﻿@using AlsProjects.Model
+@{
+    @model List<string>
+}
+
+<div>
+    <h3>Pick a topic!</h3>
+    <h5 class="desktop-only">@Html.ActionLink("[🎤] Click here and ask for a joke", "Listen", "Home", null, new { @class = "btn-link", id = "askForATopic" })</h5>
+    <div id="directions" class="alert-light">
+        <h5>Once the microphone flashes, say "Tell me a <u>dad</u> joke", or "Tell me a joke about ____"</h5>
+    </div>
+    <ul>
+        <li class="btn btn-secondary">@Html.ActionLink("Any topic!", "GetJoke", "Home", null, new {style = "color: white" })</li>
+        @foreach (var topic in Model) {
+            <li class="btn btn-primary">@Html.ActionLink(topic, "GetJoke", "Home", new { topic = topic }, new { style = "color: white" })</li>
+        }
+    </ul>
+    <br />
+    <br />
+    @using (Html.BeginForm("CreateJoke", "Home", FormMethod.Post)) {
+        <div class="form-group container-fluid" style="max-width: 70%;">
+            <h5>Add a joke<span id="expand" style="cursor: pointer;">[+]</span></h5>
+            <div id="jokeForm" style="display: none;">
+                <label for="topic">Your joke topic: (example: "Computer" or "Dad")</label>
+                <input type="text" name="topic" class="form-control" />
+                <br />
+                <label for="joke">The joke (premise and punchline):</label>
+                <input type="text" name="joke" class="form-control" required />
+                <br />
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </div>
+    }
+</div>
+<div id="microphone">🎤</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#askForATopic').click(function () {
+                $('#directions').fadeIn(200);
+                $('#microphone').css("zIndex", 9999)
+                setTimeout(function () {
+                    let flashes = 0;
+                    function flashMicrophone() {
+                        $("#microphone").css("opacity", "1"); // Fade in
+                        setTimeout(function () {
+                            $("#microphone").css("opacity", "0"); // Fade out
+                            flashes++;
+                            if (flashes < 7) {
+                                setTimeout(flashMicrophone, 200);
+                            }
+                        }, 200); // Stay visible for 200ms
+                    }
+                    flashMicrophone(); // Start flashing
+                }, 750); // Initial ms delay
+            });
+
+            $('#expand').click(function () {
+                var isShown = $('#expand').html().indexOf("+") > 0;
+                $('#jokeForm').toggle();
+                if (isShown) {
+                    $('#expand').html("[-]");
+                }
+                else {
+                    $('#expand').html("[+]");
+                }
+            });
+        });
+    </script>
+}

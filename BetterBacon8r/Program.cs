@@ -3,6 +3,9 @@ using AlsProjects.Manager.Contract;
 using AlsProjects.Manager;
 using Microsoft.EntityFrameworkCore;
 using AlsProjects.Repository.WorkoutJournal;
+using AlsProjects.Controllers.API;
+using AlsProjects.Model;
+using System.Text.Json;
 
 internal class Program {
     private const string _wikiClient = "WikiClient";
@@ -21,7 +24,17 @@ internal class Program {
         builder.Services.AddTransient<IWorkoutJournalRepository, WorkoutJournalRepository>();
         builder.Services.AddTransient<IWorkoutJournalContract, WorkoutJournalManager>();
 
+        builder.Services.AddTransient<IJokesApiController, JokesApiController>();
+        builder.Services.AddDbContext<JokesDbContext>(options =>
+            options.UseInMemoryDatabase("JokesDB")
+        );
         var app = builder.Build();
+
+        // Seed some initial data
+        using (var scope = app.Services.CreateScope()) {
+            var dbContext = scope.ServiceProvider.GetRequiredService<JokesDbContext>();
+            SeedData(app.Services, scope);
+        }
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment()) {
@@ -62,5 +75,17 @@ internal class Program {
             context.AddRange(workoutTypes);
             context.SaveChanges();
         }
+    }
+
+    private static void SeedData(IServiceProvider provider, IServiceScope scope) {
+        string filePath = "jokes.json";
+        var _jokesDbContext = scope.ServiceProvider.GetRequiredService<JokesDbContext>();
+        var jsonJokes = JsonSerializer.Deserialize<List<JokesDto>>(File.ReadAllText(filePath));
+
+        jsonJokes!.ForEach(j => {
+            _jokesDbContext.Add(new Jokes() { Joke = j.Joke, Topic = j.Topic });
+        });
+
+        _jokesDbContext.SaveChanges();
     }
 }

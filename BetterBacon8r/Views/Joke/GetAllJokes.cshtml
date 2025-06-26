@@ -1,0 +1,55 @@
+﻿@{
+    @using AlsProjects.Model;
+    @model List<Jokes>;
+}
+
+<h3>All Jokes</h3>
+<table class="table table-bordered table-active table-hover table-striped table-responsive-lg">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Topic</td>
+            <td>Joke</td>
+            <td>Delete</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var joke in Model) {
+            <tr>
+                <td>@joke.Id</td>
+                <td>@joke.Topic</td>
+                <td style="text-align:left;">@joke.Joke</td>
+                <td class="delete" style="color: red; font-weight: bolder;" data-id="@joke.Id">X</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete').click(function (e) {
+                e.preventDefault();
+                debugger;
+                var ok = confirm("Are you sure you want to delete this joke?");
+                var jokeId = $(this).data('id');
+
+                if (!ok) {
+                    return;
+                }
+                else {
+                    $.ajax({
+                        url: "@Url.Action("deletejoke", "home")",
+                        type: "POST", // Make sure your controller supports POST for deletion
+                        data: { id: jokeId },
+                        success: function (response) {
+                            location.reload();
+                        },
+                        error: function () {
+                            alert("An error occurred while deleting the joke.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

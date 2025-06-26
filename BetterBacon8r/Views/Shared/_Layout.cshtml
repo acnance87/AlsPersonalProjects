@@ -6,6 +6,41 @@
     <title>Al's Stuff</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+     <style>
+        li {
+            margin: 3px;
+        }
+
+        form {
+            position: fixed;
+            left: calc(50% - 225px); /* Centers it horizontally */
+            bottom: 10%;
+            width: 450px;
+        }
+
+        #microphone {
+            font-size: 150px;
+            opacity: 0; /* Start hidden */
+            transition: opacity 200ms ease-in-out;
+            /* Center it over everything */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -9999;
+            padding: 20px; /* Optional: Add some padding */
+            border-radius: 10px; /* Optional: Soft rounded edges */
+        }
+
+        #directions {
+            display: none;
+            border-radius: 10px; /* Optional: Soft rounded edges */
+        }
+
+        .desktop-only {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -29,6 +64,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
