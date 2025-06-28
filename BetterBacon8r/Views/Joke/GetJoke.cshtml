@@ -2,7 +2,7 @@
     @using AlsProjects.Model;
     @model JokesDto;
 }
-<div>
+<div class="text-center">
     <h5>@Model.VoiceInputDisposition</h5>
     <h3>@Model.Joke</h3><button class="btn btn-outline-primary desktop-only">@Html.ActionLink("🔊", "Speak", "Home", new { text = Model.Joke })</button>
     <br />

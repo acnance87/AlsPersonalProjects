@@ -7,6 +7,28 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
      <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        footer {
+            margin-top: auto;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            text-align: center;
+        }
+
         li {
             margin: 3px;
         }
@@ -56,7 +78,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer footer text-muted">
         <div class="container">
             &copy; 2024 - Alex Nance - <a href="https://www.linkedin.com/in/alex-nance-46285720/">LinkedIn</a> | <a href="https://github.com/acnance87">GitHub</a>
         </div>

@@ -1,0 +1,119 @@
+﻿@using AlsProjects.ViewModels
+@model JavascriptOrNahViewModel
+
+@{
+    ViewData["Title"] = "If it's JS, you drink";
+}
+<style>
+    .you-win {
+        background-color: #d4edda;
+        border: 2px solid #28a745;
+        color: #155724;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 0 10px #28a74588;
+    }
+
+    .itsJs {
+        background-color: #d4edda;
+        border: 2px solid #28a745;
+    }
+
+    .frick {
+        background-color: #f8d7da;
+        border: 2px solid #dc3545;
+        color: #721c24;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 0 10px #dc354588;
+    }
+
+    .notJs {
+        background-color: #f8d7da;
+        border: 2px solid #dc3545;
+    }
+
+    .wordChoice {
+        color: darkslategrey;
+    }
+</style>
+<div class="text-center you-win" style="display: none;">
+    <h1>Nice!</h1>
+</div>
+<div class="text-center frick" style="display: none;">
+    <h1>Nope!</h1>
+</div>
+<div class="text-center playboard" style="display: none;">
+        <div>
+            <br />
+            <h1>
+                <pre class="wordChoice bg-light badge badge-pill"></pre>
+            </h1>
+            <div class="btn-group-lg btn-group-vertical">
+                <h5>Is this a JavaScript library or just a regular word?</h5>
+                <br />
+                <button class="isJsWord btn itsJs">It's JS 👍</button>
+                <br />
+                <button class="regular btn notJs">Not JS 👎</button>
+            </div>
+        </div>
+</div>
+
+@section Scripts {
+    <script>
+        const jsWords = [@Html.Raw(string.Join(",", Model.JavascriptWords.Select(w => @$"'{w}'")))];
+        const randomWords = [@Html.Raw(string.Join(",", Model.RandomWords.Select(w => @$"'{w}'")))];
+        let currentIsJsWord = false;
+
+        function correctClick() {
+            $('.playboard').fadeOut(300, function () {
+                $('.you-win').fadeIn(800, function () {
+                    $('.you-win').fadeOut(100, function () {
+                        $('.playboard').slideDown(300, getWord());
+                    });
+                });
+            });
+        }
+
+        function frick() {
+            $('.playboard').fadeOut(300, function () {
+                $('.frick').fadeIn(800, function () {
+                    $('.frick').fadeOut(100, function () {
+                        $('.playboard').slideDown(300, getWord());
+                    });
+                });
+            });
+        }
+
+        function getRandomInt(max) {
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max + 1));
+        }
+
+        function getWord() {
+            currentIsJsWord = Math.random() < 0.5;
+
+            const wordChoice = currentIsJsWord
+                ? jsWords[getRandomInt(jsWords.length - 1)]
+                : randomWords[getRandomInt(randomWords.length - 1)];
+
+            if (currentIsJsWord)
+                $('.wordChoice').text(wordChoice.toLowerCase());
+            else
+                $('.wordChoice').text(wordChoice.toUpperCase());
+        }
+
+        $('document').ready(function () {
+            getWord();
+            $('.playboard').show(300);
+
+            $('.isJsWord').on('click', function () {
+                currentIsJsWord ? correctClick() : frick();
+            });
+
+            $('.regular').on('click', function () {
+                !currentIsJsWord ? correctClick() : frick();
+            });
+        });d
+    </script>
+}
