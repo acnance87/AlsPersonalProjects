@@ -137,10 +137,12 @@
                 ? jsWords[getRandomInt(jsWords.length - 1)]
                 : randomWords[getRandomInt(randomWords.length - 1)];
 
-            if (currentIsJsWord)
+            if (Math.random() < 0.5) {
                 $('.wordChoice').text(wordChoice.toLowerCase());
-            else
+            }
+            else {
                 $('.wordChoice').text(wordChoice.toUpperCase());
+            }
         }
 
         $('document').ready(function () {
