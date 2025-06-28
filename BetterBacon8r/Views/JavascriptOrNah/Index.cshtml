@@ -1,9 +1,6 @@
 ﻿@using AlsProjects.ViewModels
 @model JavascriptOrNahViewModel
 
-@{
-    ViewData["Title"] = "If it's JS, you drink";
-}
 <style>
     .you-win {
         background-color: #d4edda;
@@ -36,14 +33,29 @@
     .wordChoice {
         color: darkslategrey;
     }
+
+    .scoreContainer {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        opacity: 0.4;
+    }
 </style>
-<div class="text-center you-win" style="display: none;">
-    <h1>Nice!</h1>
-</div>
-<div class="text-center frick" style="display: none;">
-    <h1>Nope!</h1>
-</div>
-<div class="text-center playboard" style="display: none;">
+<div class="text-center">
+    <div class="you-win" style="display: none;">
+        <h1>Nice!</h1>
+    </div>
+    <div class="frick" style="display: none;">
+        <h1>Nope!</h1>
+    </div>
+    <div class="playboard" style="display: none;">
         <div>
             <br />
             <h1>
@@ -57,7 +69,17 @@
                 <button class="regular btn notJs">Not JS 👎</button>
             </div>
         </div>
+    </div>
+    <br />
+    <br />
+    <div class="scoreContainer" style="display: none;">
+        <p class="fire">🔥</p>
+        <h3>
+            <pre class="score">0</pre>
+        </h3>
+    </div>
 </div>
+
 
 @section Scripts {
     <script>
@@ -65,24 +87,41 @@
         const randomWords = [@Html.Raw(string.Join(",", Model.RandomWords.Select(w => @$"'{w}'")))];
         let currentIsJsWord = false;
 
+        function updateScore(value) {
+            $('.score').text(value);
+
+            const newOpacity = Math.min(1, 0.4 + (value / 10) * 0.6);
+            $('.scoreContainer').css('opacity', newOpacity);
+            $('.fire').css('font-size', `${1 + newOpacity}rem`)
+        }
+
         function correctClick() {
             $('.playboard').fadeOut(300, function () {
                 $('.you-win').fadeIn(800, function () {
                     $('.you-win').fadeOut(100, function () {
-                        $('.playboard').slideDown(300, getWord());
+                        $('.playboard').fadeIn(300, getWord());
                     });
                 });
             });
+
+            let score = $('.score').text();
+            score++;
+            updateScore(score);
+            $('.scoreContainer').show(50);
         }
 
         function frick() {
+            $('.scoreContainer').hide(50);
+
             $('.playboard').fadeOut(300, function () {
                 $('.frick').fadeIn(800, function () {
                     $('.frick').fadeOut(100, function () {
-                        $('.playboard').slideDown(300, getWord());
+                        $('.playboard').fadeIn(300, getWord());
                     });
                 });
             });
+
+            $('.score').text(0);
         }
 
         function getRandomInt(max) {
@@ -114,6 +153,6 @@
             $('.regular').on('click', function () {
                 !currentIsJsWord ? correctClick() : frick();
             });
-        });d
+        });
     </script>
 }
