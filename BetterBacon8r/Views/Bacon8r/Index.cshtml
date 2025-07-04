@@ -82,8 +82,11 @@
                 <button onclick="getNextWordFromButton(event);" class="btn-primary button-spaced">@word</button>
             }
         </div>
-        <a id="newWords" href="#">Get new words</a>
-        @Html.ActionLink("Start over", "Index", "Bacon8r")
+        <br />
+        <a id="goBack" class="btn btn-light" href="#" style="display: none;">🔙 <span id="previousWord"></span></a>
+        <br />
+        <br />
+        @Html.ActionLink("🔄 Start over", "Index", "Bacon8r", null, new { @class = "btn btn-outline", id = "startOver", style = "display: none;"})
         <br />
         <br />
         <div id="enterAWord">
@@ -96,24 +99,21 @@
     </div>
 </div>
 <div id="baconated">
+    <input type="hidden" id="totalAttempts" />
     <h2>You did it big dawg!</h2>
-    <p id="totalAttempts"></p>
-    @Html.ActionLink("Start over", "Index", "Bacon8r")
+    <div style="word-wrap: break-word; overflow-wrap: break-word;">
+        You connected <b><span id="firstWord"></span></b> to <b>Kevin Bacon</b> with <span id="degreesOfSeparation"></span> degrees of separation in <span id="totalIterations"></span> clicks.
+        <br />
+        <pre id="pathHistory" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
+    </div>
+    
+    @Html.ActionLink("🔄 Start over", "Index", "Bacon8r")
 </div>
 
 @section Scripts {
     <script>
-        $('#newWords').on('click', function (e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: "/Bacon8r/GetNewWords",
-                type: "GET",
-                success: function (data) {
-                    populateNewWords(data);
-                }
-            });
-        });
+        let wordHistory = [];
+        let showDiagnostics = true;
 
         $('#go').on('click', function (e) {
             e.preventDefault();
@@ -133,13 +133,25 @@
             $('#navigationContainer').hide();
             $('#enterAWord').hide();
 
+
             if (checkKevinBacon(word)) {
                 let iterationCount = $('#iterationCount').attr('data-count');
+                $('#degreesOfSeparation').text(wordHistory.length);
+                $('#totalIterations').text(iterationCount);
+                $('#firstWord').text(wordHistory[0]);
                 $('#resultsContainer').hide();
-                $('#totalAttempts').text(`You did in ${iterationCount} attempts, that's slick.`);
+                $('#pathHistory').text(
+                    wordHistory.map((value, index) => `${index + 1}. ${value}`).join(' → ')
+                );
                 $('#baconated').show();
             }
             else {
+                if (wordHistory.indexOf(word) < 0) {
+                    wordHistory.push(word);
+                    $('#previousWord').html(word);
+                }
+                updateGoBackVisibility();
+                $('#startOver').show();
                 $.ajax({
                     url: "/Bacon8r/GetNextWords",
                     type: "GET",
@@ -150,8 +162,14 @@
                         incrementIterationCount();
                         populateNewWords(data);
                         checkKevinBacon(data);
+
+                        if (showDiagnostics) {
+                            showDiagnosticsInConsole(word);
+                        }
                     }
                 });
+
+
             }
         }
 
@@ -200,5 +218,29 @@
                 return true;
             }
         }
+
+        function updateGoBackVisibility() {
+            if (wordHistory.length > 1) {
+                $('#goBack').show();
+            } else {
+                $('#goBack').hide();
+            }
+        }
+
+        $('#goBack').on('click', function (e) {
+            e.preventDefault();
+            wordHistory.pop();
+            let previousWord = wordHistory.pop();
+            if (previousWord) {
+                GetNextWords(previousWord);
+            }
+            updateGoBackVisibility();
+        });
+
+        function showDiagnosticsInConsole(word) {
+            console.log(wordHistory);
+            console.log(word);
+        }
+
     </script>
 }

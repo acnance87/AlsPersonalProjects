@@ -1,7 +1,9 @@
 using BetterBacon8r.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -14,14 +16,13 @@ namespace BetterBacon8r.Controllers {
         private readonly HttpClient _wikiClient;
 
         [RegularExpression("<a[^>]*href=[\"']/wiki/[^\"']*[\"'][^>]*>(.*?)<\\/a>")]
-        private const string pattern = @"<a[^>]*href=[""']/wiki/[^""']*[""'][^>]*>(.*?)<\/a>";
+        private const string pattern = @"<a[^>]*href=([""'])/wiki/[^""']*[""'][^>]*>(.*?)<\/a>";
 
 
-    public Bacon8rController(
-            IWebHostEnvironment env,
-            ILogger<Bacon8rController> logger,
-            IHttpClientFactory factory
-            ) {
+        public Bacon8rController(
+                IWebHostEnvironment env,
+                ILogger<Bacon8rController> logger,
+                IHttpClientFactory factory) {
             _env = env;
             _logger = logger;
             _wikiClient = factory.CreateClient("WikiClient");
@@ -29,7 +30,7 @@ namespace BetterBacon8r.Controllers {
 
         public async Task<IActionResult> Index() {
             var seedWords = await GetNewWords();
-                
+
             return View(seedWords);
         }
 
@@ -61,11 +62,12 @@ namespace BetterBacon8r.Controllers {
             }
 
             return toReturn;
-                
+
         }
 
         [HttpGet]
-        public async Task<IEnumerable<string>> GetNextWords([FromQuery]string word) {
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = [nameof(word)])]
+        public async Task<IEnumerable<string>> GetNextWords([FromQuery] string word) {
             var result = await (await _wikiClient.GetAsync(FormatWord(word))).Content.ReadAsStringAsync();
 
             MatchCollection matches = Regex.Matches(result, pattern);
@@ -77,8 +79,8 @@ namespace BetterBacon8r.Controllers {
 
             List<string> FilterLinkText(List<string> wordsToFilter) {
                 return wordsToFilter
-                    .Where(e => 
-                        e.Contains("<", StringComparison.OrdinalIgnoreCase) is false && 
+                    .Where(e =>
+                        e.Contains("<", StringComparison.OrdinalIgnoreCase) is false &&
                         e.Contains("span", StringComparison.OrdinalIgnoreCase) is false &&
                         e.Contains("CS1", StringComparison.OrdinalIgnoreCase) is false &&
                         e.Contains("wikipedia", StringComparison.OrdinalIgnoreCase) is false &&
@@ -88,7 +90,10 @@ namespace BetterBacon8r.Controllers {
             }
 
             string FormatWord(string word) {
-                return word.Replace(" ", "_");
+                return word
+                    .Replace(" ", "_")
+                    .Replace("/", HttpUtility.UrlEncode("/"))
+                    .Replace(",", HttpUtility.UrlEncode(","));
             }
 
             return GetTruncatedAndRandomizedWords(FilterLinkText(toReturn));

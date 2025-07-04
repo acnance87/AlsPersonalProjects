@@ -12,7 +12,7 @@ public interface IWorkoutJournalRepository
 
     Workouts AddWorkout(Workouts workout);
 
-    void SaveChanges();
+    int SaveChanges();
 
     void UpdateWorkoutSession(WorkoutSessions workoutSession);
 }

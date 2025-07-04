@@ -44,4 +44,10 @@
     <PackageReference Include="Vosk" Version="0.3.38" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="jokes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -49,9 +49,9 @@ namespace AlsProjects.Repository.WorkoutJournal
             return _context.WorkoutTypes;
         }
 
-        public void SaveChanges()
+        public override int SaveChanges()
         {
-            _context.SaveChanges();
+            return _context.SaveChanges();
         }
 
         public void UpdateWorkoutSession(WorkoutSessions workoutSession)

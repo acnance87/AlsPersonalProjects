@@ -6,6 +6,7 @@ using AlsProjects.Repository.WorkoutJournal;
 using AlsProjects.Controllers.API;
 using AlsProjects.Model;
 using System.Text.Json;
+using System.IO;
 
 internal class Program {
     private const string _wikiClient = "WikiClient";
@@ -28,6 +29,10 @@ internal class Program {
         builder.Services.AddDbContext<JokesDbContext>(options =>
             options.UseInMemoryDatabase("JokesDB")
         );
+
+        builder.Services.AddResponseCaching(options => {
+            options.SizeLimit = 1024 * 1024 * 10; // 10 MB
+        });
         var app = builder.Build();
 
         // Seed some initial data
@@ -56,6 +61,8 @@ internal class Program {
 
         Configure(app, env);
 
+        app.UseResponseCaching();
+
         app.Run();
 
         void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -78,13 +85,22 @@ internal class Program {
     }
 
     private static void SeedData(IServiceProvider provider, IServiceScope scope) {
-        string filePath = "jokes.json";
-        var _jokesDbContext = scope.ServiceProvider.GetRequiredService<JokesDbContext>();
-        var jsonJokes = JsonSerializer.Deserialize<List<JokesDto>>(File.ReadAllText(filePath));
+        string filePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "AlsProjects",
+            "jokes.json");
 
-        jsonJokes!.ForEach(j => {
-            _jokesDbContext.Add(new Jokes() { Joke = j.Joke, Topic = j.Topic });
-        });
+        using var _jokesDbContext = scope.ServiceProvider.GetRequiredService<JokesDbContext>();
+
+        if (!File.Exists(filePath)) {
+            var jokesJsonPath = Path.Combine(Environment.CurrentDirectory, "jokes.json");
+            var jokesJson = File.ReadAllText(jokesJsonPath);
+
+             File.WriteAllText(filePath, jokesJson);
+        }
+
+        var jokes = JsonSerializer.Deserialize<IEnumerable<Jokes>>(File.ReadAllText(filePath))!;
+        _jokesDbContext.Set<Jokes>().AddRange(jokes);
 
         _jokesDbContext.SaveChanges();
     }
