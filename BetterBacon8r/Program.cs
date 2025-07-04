@@ -85,10 +85,10 @@ internal class Program {
     }
 
     private static void SeedData(IServiceProvider provider, IServiceScope scope) {
-        string filePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "AlsProjects",
-            "jokes.json");
+        string filePath =
+            Environment.GetEnvironmentVariable("HOME") == null // local environment check
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AlsProjects", "jokes.json")
+            : Path.Combine("C:\\home\\data", "jokes.json");
 
         using var _jokesDbContext = scope.ServiceProvider.GetRequiredService<JokesDbContext>();
 
@@ -96,7 +96,7 @@ internal class Program {
             var jokesJsonPath = Path.Combine(Environment.CurrentDirectory, "jokes.json");
             var jokesJson = File.ReadAllText(jokesJsonPath);
 
-             File.WriteAllText(filePath, jokesJson);
+            File.WriteAllText(filePath, jokesJson);
         }
 
         var jokes = JsonSerializer.Deserialize<IEnumerable<Jokes>>(File.ReadAllText(filePath))!;
