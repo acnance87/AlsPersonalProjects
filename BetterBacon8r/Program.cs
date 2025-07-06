@@ -7,6 +7,7 @@ using AlsProjects.Controllers.API;
 using AlsProjects.Model;
 using System.Text.Json;
 using System.IO;
+using BetterBacon8r.Controllers;
 
 internal class Program {
     private const string _wikiClient = "WikiClient";

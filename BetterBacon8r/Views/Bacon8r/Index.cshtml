@@ -77,18 +77,16 @@
             <p>Find the Wiki page for <b>Kevin Bacon</b> as fast as you can.</p>
             <p>Pick a starter word, or enter your own:</p>
         </div>
-        <div id="seedWordsContainer">
+        <div id="seedWordsContainer" class="justify-content-between">
             @foreach (var word in Model) {
-                <button onclick="getNextWordFromButton(event);" class="btn-primary button-spaced">@word</button>
+                <button onclick="getNextWordFromButton(event);" class="btn-primary button-spaced flex-fill m-1" style="max-width: 85%;">@word</button>
             }
         </div>
         <br />
-        <a id="goBack" class="btn btn-light" href="#" style="display: none;">🔙 <span id="previousWord"></span></a>
+        <a id="goBack" class="btn btn-outline-dark" href="#" style="display: none;">🔙 <span id="previousWord"></span></a>
         <br />
         <br />
         @Html.ActionLink("🔄 Start over", "Index", "Bacon8r", null, new { @class = "btn btn-outline", id = "startOver", style = "display: none;"})
-        <br />
-        <br />
         <div id="enterAWord">
             <label for="word">Enter a word</label>
             <input type="text" id="word" />
@@ -104,7 +102,8 @@
     <div style="word-wrap: break-word; overflow-wrap: break-word;">
         You connected <b><span id="firstWord"></span></b> to <b>Kevin Bacon</b> with <span id="degreesOfSeparation"></span> degrees of separation in <span id="totalIterations"></span> clicks.
         <br />
-        <pre id="pathHistory" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
+        <br />
+        <pre id="pathHistory" style="white-space: pre-wrap; word-wrap: break-word; border: dotted; border-color: darkgray;"></pre>
     </div>
     
     @Html.ActionLink("🔄 Start over", "Index", "Bacon8r")
@@ -140,8 +139,8 @@
                 $('#totalIterations').text(iterationCount);
                 $('#firstWord').text(wordHistory[0]);
                 $('#resultsContainer').hide();
-                $('#pathHistory').text(
-                    wordHistory.map((value, index) => `${index + 1}. ${value}`).join(' → ')
+                $('#pathHistory').html(
+                    wordHistory.map((value, index) => `${index + 1}. ${value}`).join(' → <br />')
                 );
                 $('#baconated').show();
             }
@@ -175,6 +174,14 @@
 
         function populateNewWords(data) {
             let container = $('#seedWordsContainer');
+            
+            let deadEndHit = data[0].toLowerCase() === 'article wizard' || data.length === 0;
+
+            if (deadEndHit) {
+                container.html('<span class="btn btn-warning disabled">Dead end hit! Go back and try again.</span>');
+                
+                return;
+            }
 
             $(container).html('');
             data.forEach(word => {
