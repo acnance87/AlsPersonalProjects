@@ -2,6 +2,7 @@ using BetterBacon8r.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -36,6 +37,7 @@ namespace BetterBacon8r.Controllers {
             string filePath = Path.Combine(_env.WebRootPath, "seedWords.json");
             string jsonContent = await System.IO.File.ReadAllTextAsync(filePath);
             List<string> seedWords = JsonSerializer.Deserialize<List<string>>(jsonContent)!;
+            seedWords.ForEach(seedWords => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(seedWords.Trim()));
 
             return GetTruncatedAndRandomizedWords(seedWords);
         }
