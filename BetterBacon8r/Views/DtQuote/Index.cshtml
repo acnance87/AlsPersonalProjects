@@ -1,0 +1,95 @@
+@model List<string>
+@{
+    ViewData["Title"] = "Hear the Emperor's words";
+}
+<style>
+    body.dtquote-dark {
+        background: #0b0b0b;
+        color: #e6e1d6;
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+    .dtquote-container {
+        max-width: 900px;
+        margin: 48px auto;
+        padding: 28px;
+        background: linear-gradient(180deg, rgba(20,20,20,0.6), rgba(10,10,10,0.8));
+        border: 1px solid rgba(255,255,255,0.03);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+        border-radius: 8px;
+    }
+    h2.dtquote-title {
+        font-family: "Cinzel", "Georgia", serif;
+        letter-spacing: 1px;
+        color: #f3e9d2;
+        margin-bottom: 8px;
+    }
+    .dtquote-button {
+        display: inline-block;
+        margin: 12px 0 18px 0;
+        padding: 10px 16px;
+        background: linear-gradient(180deg, #2b2b2b, #111);
+        color: #f3e9d2;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .dtquote-quote-display {
+        margin-top: 20px;
+        padding: 16px;
+        background: rgba(0,0,0,0.3);
+        border-left: 3px solid rgba(243,233,210,0.3);
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        font-style: italic;
+        color: #d4c9b8;
+    }
+    .muted { color: rgba(255,255,255,0.45); font-size: 0.9rem; }
+</style>
+
+<script>
+    // ensure body has dark class
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('dtquote-dark');
+    });
+
+    async function fetchQuotes() {
+        const quoteEl = document.getElementById('quote');
+        const btn = document.getElementById('hear-btn');
+        btn.disabled = true;
+        btn.textContent = "listening...";
+
+        try {
+            const resp = await fetch('/api/dtquote?k=heresy');
+            if (!resp.ok) {
+                quoteEl.textContent = "No quotes available or access denied.";
+                quoteEl.style.display = 'flex';
+                return;
+            }
+
+            const quote = await resp.text();
+            if (!quote) {
+                quoteEl.textContent = "No quote returned.";
+            } else {
+                quoteEl.textContent = '"' + quote + '"';
+            }
+            quoteEl.style.display = 'flex';
+        } catch (e) {
+            quoteEl.textContent = "Error fetching quote.";
+            quoteEl.style.display = 'flex';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "hear the emperor's words";
+        }
+    }
+</script>
+
+<div class="dtquote-container">
+    <h2 class="dtquote-title">Hear the Emperor's words</h2>
+
+    <button id="hear-btn" class="dtquote-button" onclick="fetchQuotes()">hear the emperor's words</button>
+
+    <div id="quote" class="dtquote-quote-display" style="display:none;"></div>
+</div>
