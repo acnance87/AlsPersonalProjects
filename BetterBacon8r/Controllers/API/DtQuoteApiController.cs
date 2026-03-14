@@ -13,7 +13,6 @@ namespace AlsProjects.Controllers.API {
         }
 
         // GET api/dtquote?k=heresy
-        [ResponseCache]
         [HttpGet]
         public ActionResult<string> Get([FromQuery] string? k) {
             // Only return data when the key k equals the expected value
