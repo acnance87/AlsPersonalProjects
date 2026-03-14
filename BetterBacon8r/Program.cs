@@ -19,6 +19,7 @@ internal class Program {
         builder.Services.AddControllersWithViews();
         builder.Services.AddHttpClient(_wikiClient, (options) => {
             options.BaseAddress = new Uri("https://en.wikipedia.org/wiki/");
+            options.DefaultRequestHeaders.UserAgent.ParseAdd("BetterBacon8r/1.0) generic-library/0.0");
         });
 
         builder.Services.AddDbContext<WorkoutJournalContext>(opts => opts.UseInMemoryDatabase("WorkoutJournal"));
